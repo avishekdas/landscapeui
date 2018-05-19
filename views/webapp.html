@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html ng-app="webApp">
+   <head>
+      <meta charset="utf8">
+      <base href="/">
+      <title>Application Landscape</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+      <link rel="stylesheet" href="assets/css/main.css" />
+      <link rel="stylesheet" href="assets/css/fancybox.css" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.0.47/jquery.fancybox.min.css" />
+      <link rel="stylesheet" href="assets/css/jquery-ui.min.css" />
+	  <link rel="stylesheet" href="assets/css/vis.min.css"/>
+      <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.0.47/jquery.fancybox.min.js"></script>
+      <script src="assets/js/jquery.min.js"></script>
+      <script src="assets/js/jquery-ui.min.js" ></script>
+      <script type="text/javascript" src="js/bootstrap/dist/js/bootstrap.min.js"></script>
+      <script type="text/javascript" src="js/angular/angular.js"></script>
+      <script type="text/javascript" src="js/angular-route/angular-route.js"></script>
+      <script type="text/javascript" src="js/angular-flash/dist/angular-flash.js"></script>
+      <script src="js/app.js"></script>
+      <script src="js/controllers.js" defer></script>
+      <script src="assets/js/skel.min.js"></script>
+      <script src="assets/js/util.js"></script>
+      <script src="assets/js/main.js"></script>
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <script type="text/javascript" src="assets/js/jquery.min.js"></script>
+      <script type="text/javascript" src="assets/js/vis.min.js"></script>
+   </head>
+   <body>
+      <!-- Wrapper -->
+      <div id="wrapper">
+         <!-- Main -->
+         <div id="main">
+            <div class="inner">
+               <!-- Header -->
+               <header id="header">
+                  <a href="/" class="logo"><strong>Application Landscape</strong> by IBM</a>
+                  Welcome
+               </header>
+               <!-- Content -->
+               <section>
+					<div id="graph" style="width:1000px; height:1000px;"></div>
+					<!-- <div id="mynetwork" style="width:1000px; height:1000px;"></div> -->
+               </section>
+            </div>
+         </div>
+		 <!-- Sidebar -->
+				<div id="sidebar">
+					<div id="inner1" class="inner">
+					<!-- Menu -->
+						<nav id="menu">
+							<header class="major">
+								<h2>Menu</h2>
+							</header>
+							<ul id="leftmenu">
+								<li><a href="/api/home/#/main">Search by Application</a></li>
+								<li><a href="/api/home/#/dashboard">Search by Server</a></li>
+								<!-- <li><a href="/api/home/#/selfevaluation">Self Evaluation</a></li>
+								<li><a href="/api/home/#/dashboard">Evaluate Resource</a></li>
+								<li><a href="/api/home/#/manageskill">Manage Skill</a></li>
+								<li><a href="/api/home/#/managecert">Manage Certification</a></li>
+								<li><a href="/home/#/manageevaluator">Manage Evaluator</a></li>
+								<li><a href="/api/home/#/managerating">Manage Rating</a></li>
+								<li><a href="/api/home/#/aboutus">About</a></li>
+								<li><a href="/api/logout">Logout</a></li> -->
+							</ul>
+						</nav>
+
+					<!-- Footer -->
+						<footer id="footer">
+							<p class="copyright">&copy; COPYRIGHT IBM CORPORATION 2005 ALL RIGHTS RESERVED.</p>
+						</footer>
+					</div>
+				</div>
+      </div>
+   </body>
+   <script type="text/javascript">
+	$.getJSON('/resource/getgraph', function(result){
+		/**var g = {
+			nodes: result.nodes,
+			edges: result.edges
+		};
+		var network = new vis.Network(container, g, options);**/
+		
+		var nodess = result.nodes;
+		var edgess = result.edges;
+		$.each(nodess, function(key,value) {
+			if(value.level==0){
+				value.shape='dot';
+			}
+			if(value.level==(nodess.length-1)){
+				value.shape='dot';
+			}
+		}); 
+	 
+		var nodes = new vis.DataSet(nodess);
+		// create an array with edges
+		var edges = new vis.DataSet(edgess);
+	 
+		// create a network
+		var container = document.getElementById('graph');
+		//var container = $('#mynetwork')[0];
+		  
+		var data = {
+			nodes: nodes,
+			edges: edges
+		};
+		var width = 100;
+		var height = 100;
+		var options = {
+			width: width + '%',
+			height: height + '%',
+			nodes: {
+			  shape: 'box',
+			  labelHighlightBold: true,
+			  //size: 40,
+			  font: {
+				//size: 22 // px
+			  }
+			},
+			
+			edges: {
+				  //smooth: true,
+				  smooth: {
+				  enabled: true,
+				  type: "curvedCW", 
+				  forceDirection: "vertical", //'horizontal', 'vertical', 'none'
+				  roundness: 0.2
+				},
+				  arrows: {
+					to:     {enabled: true, scaleFactor:1}
+					},
+				 font: {
+				  //size: 18 // px
+				 
+				},
+				color: {
+				  color:'#848484'
+				}
+			},
+			physics: true,
+			interaction: {
+				hover:true,
+				dragNodes: true,
+				zoomView: true,
+				dragView: true 
+			},
+			groups: {
+			  'switch': {
+				shape: 'triangle',
+				color: '#FF9900' // orange
+			  },
+			  application: {
+				shape: 'dot',
+				color: "#2B7CE9" // blue
+			  },
+			  user: {
+				shape: 'square',
+				color: "#109618" // green
+			  }
+			}
+		};
+		var network = new vis.Network(container, data, options);
+		network.on("click", function (params) {
+			params.event = "[original event]";
+			console.log(JSON.stringify(params, null, 4));
+			showConnectedEdgeLabels(network, params.nodes[0], edges);
+		});
+	
+		network.on("hoverNode", function (params) {
+			showConnectedEdgeLabels(network, params.node, edges);
+		});
+	 
+		network.on("blurNode", function (params) {
+			edges.forEach(function(edge){
+				edges.update({id: edge.id, label:''})
+			})
+		});
+		
+		
+		function showConnectedEdgeLabels(network, nodeId, edges){
+			var connectedEdges = network.getConnectedEdges(nodeId);
+			var items = edges.get(connectedEdges); 
+			$.each(items, function(key,value) {
+				edges.update({id: value.id, label:value.labelC});
+				//edges.update({id: val, label:value.edgeLabel});
+					/*$.each(connectedEdges, function(key,val) {
+							edges.update({id: val, label:value.edgeLabel});
+					});*/
+			});
+		}
+	 });
+  </script>
+</html>

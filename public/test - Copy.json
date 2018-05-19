@@ -1,0 +1,85 @@
+{  
+   "nodes":[  
+      {  
+		"id": 0,
+         "label":"GCSS",
+         "title":"GCSS",
+		 "sla":"GOLD",
+		 "portfolio":"Commercial"
+      },
+      {  
+	  "id": 1,
+         "label":"USI",
+         "title":"USI",
+		 "sla":"GOLD",
+		 "portfolio":"Commercial"
+      },
+      {  
+	  "id": 2,
+         "label":"CSED",
+         "title":"Commenrcial Service Export Documentation",
+		 "sla":"GOLD",
+		 "portfolio":"Commercial"
+      },
+	  {  
+	  "id": 3,
+         "label":"GEMS",
+         "title":"Global Event Management Syestem",
+		 "sla":"GOLD",
+		 "portfolio":"EDI"
+      },
+	  {  
+	  "id": 4,
+         "label":"AMPS",
+         "title":"AMPS",
+		 "sla":"GOLD",
+		 "portfolio":"EDI"
+      },
+	  {  
+	  "id": 5,
+         "label":"CODS",
+         "title":"CODS",
+		 "sla":"GOLD",
+		 "portfolio":"EDI"
+      }
+	  
+   ],
+   "edges":[  
+      {  
+        "id": "0",
+		"label": "Feeds",
+		"from": 0,
+		"to": 3
+      },
+      {  
+        "id": "1",
+		"label": "Feeds",
+		"from": 3,
+		"to": 4
+      },
+      {  
+        "id": "2",
+		"label": "EDI message",
+		"from": 4,
+		"to": 2
+      },
+      {  
+        "id": "3",
+		"label": "Response",
+		"from": 2,
+		"to": 4
+      },
+      {  
+        "id": "4",
+		"label": "Authentication",
+		"from": 0,
+		"to": 1
+      },
+      {  
+        "id": "5",
+		"label": "Feeds",
+		"from": 1,
+		"to": 5
+      }
+   ]
+}

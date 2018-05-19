@@ -1,0 +1,31 @@
+<!doctype html>
+<html ng-app="mainApp" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Application Landscape</title>
+    <link rel="stylesheet" href="assets/css/vis.min.css"/>
+	<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+	<script type="text/javascript" src="assets/js/vis.min.js"></script>
+	
+</head>
+<body>
+	<section>
+		<div ng-view></div>
+	</section>
+	<div id="graph" style="width:1000px; height:1000px;"></div>
+	
+
+	<script type="text/javascript">
+		var container = document.getElementById('graph');
+		var options = {};
+		var json = $.getJSON("https://gist.githubusercontent.com/ikwattro/8a8b0a6cfe4910db20b7/raw/de4fbbeecae349338aea065bd96a25913ed78301/graph.json")
+			.done(function(data){
+				var g = {
+					nodes: data.nodes,
+					edges: data.edges
+				};
+				var network = new vis.Network(container, g, options);
+			});
+	</script>
+</body>
+</html>
